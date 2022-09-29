@@ -5,12 +5,12 @@ let password = "";
 let verifypassword = "";
 let passwordRegEx=/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!]).{6,40})/;
 
-function setphonenumber(){
-    phonenumber = $("#phonenumber").val();
+function setusername(){
+    userName = $("#username").val();
 }
 
-function setOTP(){
-    OTP = $("#OTP").val();
+function setuserpassword(){
+    password = $("#password").val();
     var valid=passwordRegEx.exec(password);
     if (!valid){
         alert('Must be 6 digits, upper, lower, number, and symbol');
@@ -19,7 +19,7 @@ function setOTP(){
 
 function setverifypassword(){
     verifypassword = $("#verifypassword").val();
-    if (verifypassword!=OTP){
+    if (verifypassword!=password){
         alert('Passwords must be entered the same twice');
     }
 }
@@ -47,8 +47,8 @@ function checkexpiredtoken(token){
 }
 
 function userlogin(){
-    setOTP();
-    setphonenumber();
+    setuserpassword();
+    setusername();
     $.ajax({
         type: 'POST',
         url: 'https://dev.stedi.me/login',
@@ -93,7 +93,7 @@ function createuser(){
     $.ajax({
         type: 'POST',
         url: 'https://dev.stedi.me/user',
-        data: JSON.stringify({phonenumber, 'email': phonenumber, OTP, 'verifyPassword': vpwd, 'accountType':'Personal'}),//we are using the email as the user name
+        data: JSON.stringify({userName, 'email': userName, password, 'verifyPassword': vpwd, 'accountType':'Personal'}),//we are using the email as the user name
         success: function(data) { alert(data);
 //        readonlyforms("newUser");
 //        alert(readonlyforms("newUser"));
