@@ -1,26 +1,32 @@
 //© 2021 Sean Murdock
 
-let userName = "";
-let password = "";
-let verifypassword = "";
-let passwordRegEx=/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!]).{6,40})/;
+let phonenumber = "";
+let OTP = "";
+let verifyOTP = "";
+let OTPRegEx=/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!]).{6,40})/;
 
-function setusername(){
-    userName = $("#username").val();
+function setphonenumber(){
+    phonenumber = $("#phonenumber").val();
 }
 
-function setuserpassword(){
-    password = $("#password").val();
-    var valid=passwordRegEx.exec(password);
-    if (!valid){
-        alert('Must be 6 digits, upper, lower, number, and symbol');
-    }
+
+const sendText=()=>{
+    $.ajax({
+        type: 'POST',
+         url: 'https://dev.stedi.me/twofactorlogin/'+phonenumber,
+         contentType: "application/text",
+         dataType: 'text'
+    });
 }
 
-function setverifypassword(){
-    verifypassword = $("#verifypassword").val();
-    if (verifypassword!=password){
-        alert('Passwords must be entered the same twice');
+function setuserOTP(){
+    OTP = $("#OTP").val();
+} 
+
+function setverifyOTP(){
+    verifyOTP = $("#verifyOTP").val();
+    if (verifyOTP!=OTP){
+        alert('OTPs must be entered the same twice');
     }
 }
 
@@ -47,12 +53,12 @@ function checkexpiredtoken(token){
 }
 
 function userlogin(){
-    setuserpassword();
-    setusername();
+    setuserOTP();
+    setphonenumber();
     $.ajax({
         type: 'POST',
-        url: 'https://dev.stedi.me/login',
-        data: JSON.stringify({userName, password}),
+        url: 'https://dev.stedi.me/twofactorlogin',
+        data: JSON.stringify({phoneNumber:phonenumber, oneTimePassword:OTP}),
         success: function(data) {
             window.location.href = "/timer.html#"+data;//add the token to the url
         },
@@ -93,7 +99,7 @@ function createuser(){
     $.ajax({
         type: 'POST',
         url: 'https://dev.stedi.me/user',
-        data: JSON.stringify({userName, 'email': userName, password, 'verifyPassword': vpwd, 'accountType':'Personal'}),//we are using the email as the user name
+        data: JSON.stringify({phonenumber, 'email': phonenumber, OTP, 'verifyOTP': vpwd, 'accountType':'Personal'}),//we are using the email as the user name
         success: function(data) { alert(data);
 //        readonlyforms("newUser");
 //        alert(readonlyforms("newUser"));
@@ -107,7 +113,7 @@ function getstephistory(){
       $.ajax({
             type: 'POST',
             url: 'https://dev.stedi.me/stephistory',
-            data: JSON.stringify({userName}),
+            data: JSON.stringify({phonenumber}),
             success: function(data) { alert(data);
             json = $.parseJSON(data);
             $('#results').html(json.name+' Total Steps: ' + json.stepTotal)},
@@ -123,6 +129,6 @@ var enterFunction = (event) =>{
     }
 }
 
-var passwordField = document.getElementById("password");
+var OTPField = document.getElementById("OTP");
 
-passwordField.addEventListener("keyup", enterFunction);
+OTPField.addEventListener("keyup", enterFunction);OTP
